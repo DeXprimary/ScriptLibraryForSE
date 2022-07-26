@@ -1,0 +1,74 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32228.343
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_BOSMissileScript", "SE_BOSMissileScript\SE_BOSMissileScript.csproj", "{0FABC3BB-8EE4-40CB-A391-0FA2B07AD6F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_Machinery_MainGrid", "SE_Machinery_MainGrid\SE_Machinery_MainGrid.csproj", "{B4BDE371-5E74-47D5-8C5F-D89AF484429A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_Sorter_TerraNova", "SE_Sorter_TerraNova\SE_Sorter_TerraNova.csproj", "{0E0E0354-D4C8-453A-AF1E-A5AA3787AD5E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_Missile_DeX_1", "SE_Missile_DeX_1\SE_Missile_DeX_1.csproj", "{FF4E6BA6-2F39-40E4-A3E7-7ECCCF139B66}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_Trader_Moral_1", "SE_Trader_Moral_1\SE_Trader_Moral_1.csproj", "{5C506A34-106F-4B0B-A2F3-5F8966008071}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_Trader_Moral_2", "SE_Trader_Moral_2\SE_Trader_Moral_2.csproj", "{79DEFDA8-5A49-4191-BFD5-2A3166F56F64}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_TriangulateRadar", "SE_TriangulateRadar\SE_TriangulateRadar.csproj", "{28671A8A-13BB-4D58-936D-0480BD759FCA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_ShipFleetFormation", "SE_ShipFleetFormation\SE_ShipFleetFormation.csproj", "{3EFD4FA6-6520-4B58-B193-2B3C68936163}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_Shipyard_MainGrid", "SE_Shipyard_MainGrid\SE_Shipyard_MainGrid.csproj", "{62A20CA7-6F68-497E-A540-B147210B93B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_Shipyard_BotsGrid", "SE_Shipyard_BotsGrid\SE_Shipyard_BotsGrid.csproj", "{600020EE-B15D-415B-8ABE-A992E3BAFEFE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_Shipyard_ProjectorGrid", "SE_Shipyard_ProjectorGrid\SE_Shipyard_ProjectorGrid.csproj", "{F257EB25-7268-45DE-9C8F-107F746BBE0D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_Shipyard_SphereGrid", "SE_Shipyard_SphereGrid\SE_Shipyard_SphereGrid.csproj", "{2B1F3778-0511-4819-8419-85A490FA5F01}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_TerraPublicRefinery", "SE_TerraPublicRefinery\SE_TerraPublicRefinery.csproj", "{3B75834A-AC56-4F97-A32C-308C4EAA8B53}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_Trader_DeX_NotActual", "SE_Trader_DeX_NotActual\SE_Trader_DeX_NotActual.csproj", "{4A8C8712-FBB9-4371-8727-7CF089DE91A4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0FABC3BB-8EE4-40CB-A391-0FA2B07AD6F1}.Debug|x64.ActiveCfg = Debug|x64
+		{0FABC3BB-8EE4-40CB-A391-0FA2B07AD6F1}.Debug|x64.Build.0 = Debug|x64
+		{B4BDE371-5E74-47D5-8C5F-D89AF484429A}.Debug|x64.ActiveCfg = Debug|x64
+		{B4BDE371-5E74-47D5-8C5F-D89AF484429A}.Debug|x64.Build.0 = Debug|x64
+		{0E0E0354-D4C8-453A-AF1E-A5AA3787AD5E}.Debug|x64.ActiveCfg = Debug|x64
+		{0E0E0354-D4C8-453A-AF1E-A5AA3787AD5E}.Debug|x64.Build.0 = Debug|x64
+		{FF4E6BA6-2F39-40E4-A3E7-7ECCCF139B66}.Debug|x64.ActiveCfg = Debug|x64
+		{FF4E6BA6-2F39-40E4-A3E7-7ECCCF139B66}.Debug|x64.Build.0 = Debug|x64
+		{5C506A34-106F-4B0B-A2F3-5F8966008071}.Debug|x64.ActiveCfg = Debug|x64
+		{5C506A34-106F-4B0B-A2F3-5F8966008071}.Debug|x64.Build.0 = Debug|x64
+		{79DEFDA8-5A49-4191-BFD5-2A3166F56F64}.Debug|x64.ActiveCfg = Debug|x64
+		{79DEFDA8-5A49-4191-BFD5-2A3166F56F64}.Debug|x64.Build.0 = Debug|x64
+		{28671A8A-13BB-4D58-936D-0480BD759FCA}.Debug|x64.ActiveCfg = Debug|x64
+		{28671A8A-13BB-4D58-936D-0480BD759FCA}.Debug|x64.Build.0 = Debug|x64
+		{3EFD4FA6-6520-4B58-B193-2B3C68936163}.Debug|x64.ActiveCfg = Debug|x64
+		{3EFD4FA6-6520-4B58-B193-2B3C68936163}.Debug|x64.Build.0 = Debug|x64
+		{62A20CA7-6F68-497E-A540-B147210B93B3}.Debug|x64.ActiveCfg = Debug|x64
+		{62A20CA7-6F68-497E-A540-B147210B93B3}.Debug|x64.Build.0 = Debug|x64
+		{600020EE-B15D-415B-8ABE-A992E3BAFEFE}.Debug|x64.ActiveCfg = Debug|x64
+		{600020EE-B15D-415B-8ABE-A992E3BAFEFE}.Debug|x64.Build.0 = Debug|x64
+		{F257EB25-7268-45DE-9C8F-107F746BBE0D}.Debug|x64.ActiveCfg = Debug|x64
+		{F257EB25-7268-45DE-9C8F-107F746BBE0D}.Debug|x64.Build.0 = Debug|x64
+		{2B1F3778-0511-4819-8419-85A490FA5F01}.Debug|x64.ActiveCfg = Debug|x64
+		{2B1F3778-0511-4819-8419-85A490FA5F01}.Debug|x64.Build.0 = Debug|x64
+		{3B75834A-AC56-4F97-A32C-308C4EAA8B53}.Debug|x64.ActiveCfg = Debug|x64
+		{3B75834A-AC56-4F97-A32C-308C4EAA8B53}.Debug|x64.Build.0 = Debug|x64
+		{4A8C8712-FBB9-4371-8727-7CF089DE91A4}.Debug|x64.ActiveCfg = Debug|x64
+		{4A8C8712-FBB9-4371-8727-7CF089DE91A4}.Debug|x64.Build.0 = Debug|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E589FD65-85FB-4114-B2ED-3C25AF19AF59}
+	EndGlobalSection
+EndGlobal
