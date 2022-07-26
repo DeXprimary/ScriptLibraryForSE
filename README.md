@@ -13,7 +13,7 @@
 Скрип для автоматизации построения кораблей в формацию. 
 
 ## SE_Shipyard
-#####(SE_Shipyard_BotsGrid, SE_Shipyard_MainGrid, SE_Shipyard_ProjectorGrid, SE_Shipyard_SphereGrid)
+### (SE_Shipyard_BotsGrid, SE_Shipyard_MainGrid, SE_Shipyard_ProjectorGrid, SE_Shipyard_SphereGrid)
 Скрипт состоящий из 4 модулей (для каждого грида) реализует комплексное управление автоматической верфью.
 
 ## SE_Sorter_TerraNova
