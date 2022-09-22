@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_TerraPublicRefinery", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_Trader_DeX_NotActual", "SE_Trader_DeX_NotActual\SE_Trader_DeX_NotActual.csproj", "{4A8C8712-FBB9-4371-8727-7CF089DE91A4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_DeathMatchArena_PlayerAccess", "SE_DeathMatchArena_PlayerAccess\SE_DeathMatchArena_PlayerAccess.csproj", "{F6BBC5B5-D4B6-4533-A772-2AB57400116C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -64,6 +66,8 @@ Global
 		{3B75834A-AC56-4F97-A32C-308C4EAA8B53}.Debug|x64.Build.0 = Debug|x64
 		{4A8C8712-FBB9-4371-8727-7CF089DE91A4}.Debug|x64.ActiveCfg = Debug|x64
 		{4A8C8712-FBB9-4371-8727-7CF089DE91A4}.Debug|x64.Build.0 = Debug|x64
+		{F6BBC5B5-D4B6-4533-A772-2AB57400116C}.Debug|x64.ActiveCfg = Debug|x64
+		{F6BBC5B5-D4B6-4533-A772-2AB57400116C}.Debug|x64.Build.0 = Debug|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
