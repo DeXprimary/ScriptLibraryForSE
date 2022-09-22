@@ -28,14 +28,23 @@ namespace IngameScript
         public string enteredCode = "";
         public int lengthOfCode = 5;
         public bool isTokenVerifed = false;
-        
-        public void RefreshState(int token)
+
+        public bool isNeedReset = false;
+
+        public Program mainScript;
+
+        public MyGateway(Program script)
+        {
+            mainScript = script;
+        }
+
+        public void RefreshState()
         {
             switch (currentState)
             {
                 case StateGateway.NotReady:
                     {
-                        if (FirstDoor.OpenRatio == 1 && SecondDoor.OpenRatio == 0)
+                        if (FirstDoor.OpenRatio == 1 && SecondDoor.OpenRatio == 0 && !isNeedReset)
                         {
                             if (isGatewayReseted)
                             {
@@ -55,7 +64,7 @@ namespace IngameScript
                     {
                         LCDAction.WriteText("СВОБОДНЫЙ ШЛЮЗ");
 
-                        if (VolumeSensor.IsActive)
+                        if (VolumeSensor.IsActive && mainScript.arena.currentState == MyArena.StateGame.Prepare)
                         {
                             if (CheckSoloUser())
                             {
@@ -72,7 +81,7 @@ namespace IngameScript
 
                 case StateGateway.UserInside:
                     {
-                        if (VolumeSensor.IsActive)
+                        if (VolumeSensor.IsActive && mainScript.arena.currentState == MyArena.StateGame.Prepare)
                         {
                             if (timeStampStartHydrogenChecking.HasValue)
                             {
@@ -85,7 +94,7 @@ namespace IngameScript
 
                             if (enteredCode.Length >= lengthOfCode)
                             {
-                                if ((enteredCode.GetHashCode() ^ 77) == token)
+                                if ((enteredCode.GetHashCode() ^ 77) == int.Parse(mainScript.Me.CustomData))
                                 {
                                     isTokenVerifed = true;
                                 }
@@ -173,6 +182,8 @@ namespace IngameScript
             LCDAction.WriteText("ОЖИДАНИЕ...");
 
             enteredCode = "";
+
+            isNeedReset = false;
 
             isTokenVerifed = false;
 

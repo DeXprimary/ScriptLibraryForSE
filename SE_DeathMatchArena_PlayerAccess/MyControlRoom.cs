@@ -28,7 +28,8 @@ namespace IngameScript
         public int lengthOfCode = 5;
         public string cancelToken = "";
 
-        public bool isGameStarted = false;
+        public bool isGameNeedCancel = false;
+        public bool isGameCanCancel = false;
 
         public Program mainScript;
 
@@ -45,9 +46,9 @@ namespace IngameScript
             {
                 case StateControlRoom.NotReady:
                     {
-                        if (!isGameStarted)
+                        if (!isGameCanCancel)
                         {
-                            if (Door.OpenRatio == 1)
+                            if (Door.OpenRatio == 1 && mainScript.arena.currentState == MyArena.StateGame.Ready)
                             {
                                 if (isRoomReseted)
                                 {
@@ -74,7 +75,9 @@ namespace IngameScript
                             {
                                 if ((cancelToken.GetHashCode() ^ 77) == int.Parse(mainScript.Me.CustomData))
                                 {
-                                    isGameStarted = false;
+                                    isGameNeedCancel = true;
+
+                                    isGameCanCancel = false;
                                 }
                                 cancelToken = "";
                             }
@@ -106,6 +109,8 @@ namespace IngameScript
                             if (isModeSelected && isModeConfirm)
                             {
                                 currentState = StateControlRoom.ModeSelected;
+
+                                isGameCanCancel = true;
                             }
 
                             if (!isModeSelected)
@@ -131,9 +136,7 @@ namespace IngameScript
 
                                 string str = "Сообщи этот токен\nтолько участникам матча:\n\n" + token;
 
-                                LCDControlRoom.WriteText(str);
-
-                                isGameStarted = true;
+                                LCDControlRoom.WriteText(str);                                
                             }
                         }
                         else ResetControlRoom();
@@ -163,23 +166,43 @@ namespace IngameScript
 
         public void RefreshSurfaceButtons()
         {
-            if (isGameStarted)
+            if (isGameCanCancel)
             {
-                for (int i = 0; i < 3; i++)
+                if (currentState == StateControlRoom.NotReady)
                 {
-                    ((IMyTextSurfaceProvider)Button1).GetSurface(i).WriteText((i + 1).ToString());
-                }
+                    for (int i = 0; i < 3; i++)
+                    {
+                        ((IMyTextSurfaceProvider)Button1).GetSurface(i).WriteText((i + 1).ToString());
+                    }
 
-                ((IMyTextSurfaceProvider)Button1).GetSurface(3).WriteText("Стереть");
+                    ((IMyTextSurfaceProvider)Button1).GetSurface(3).WriteText("Стереть");
+                }
+                else
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        ((IMyTextSurfaceProvider)Button1).GetSurface(i).WriteText("");
+                    }
+                }
             }
             else
             {
-                for (int i = 0; i < 3; i++)
+                if (currentState == StateControlRoom.NotReady)
                 {
-                    ((IMyTextSurfaceProvider)Button1).GetSurface(i).WriteText((currentPage * 3 + i + 1).ToString() + "x" + (currentPage * 3 + i + 1).ToString());
+                    for (int i = 0; i < 4; i++)
+                    {
+                        ((IMyTextSurfaceProvider)Button1).GetSurface(i).WriteText("");
+                    }
                 }
+                else
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        ((IMyTextSurfaceProvider)Button1).GetSurface(i).WriteText((currentPage * 3 + i + 1).ToString() + "x" + (currentPage * 3 + i + 1).ToString());
+                    }
 
-                ((IMyTextSurfaceProvider)Button1).GetSurface(3).WriteText("Далее");
+                    ((IMyTextSurfaceProvider)Button1).GetSurface(3).WriteText("Далее");
+                }
             }
         }
 
@@ -191,7 +214,7 @@ namespace IngameScript
                 {
                     Door.CloseDoor();
 
-                    RefreshState();
+                    //RefreshState();
                 }
             }
             else
@@ -216,6 +239,10 @@ namespace IngameScript
 
         public void ChangePage()
         {
+            isModeSelected = false;
+
+            modeSelected = 0;
+
             if (currentPage >= maxCountPage - 1)
             {
                 currentPage = 0;
@@ -247,6 +274,8 @@ namespace IngameScript
             LCDControlRoom.WriteText("ОЖИДАНИЕ...");
 
             cancelToken = "";
+
+            isGameNeedCancel = false;
 
             isModeSelected = false;
 
