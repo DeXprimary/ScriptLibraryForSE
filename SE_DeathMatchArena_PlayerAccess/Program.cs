@@ -107,6 +107,8 @@ namespace IngameScript
             arena.LCDArenaState2 = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDArenaState2");
             arena.LCDArenaBoardA = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDArenaBoardA");
             arena.LCDArenaBoardB = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDArenaBoardB");
+            arena.PrepareZoneStoreA = (IMyStoreBlock)GridTerminalSystem.GetBlockWithName("PrepareZoneStoreA");
+            arena.PrepareZoneStoreB = (IMyStoreBlock)GridTerminalSystem.GetBlockWithName("PrepareZoneStoreB");
 
             LCDDebug1 = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDDebug1");
 
@@ -243,6 +245,10 @@ namespace IngameScript
 
             if ((updateSource & (UpdateType.Update100 | UpdateType.Update10 | UpdateType.Update1)) != 0)
             {
+                if (arena.currentState == MyArena.StateGame.Ready && controlRoom.currentState != MyControlRoom.StateControlRoom.UserInside)
+                    Runtime.UpdateFrequency = UpdateFrequency.Update100;
+                else Runtime.UpdateFrequency = UpdateFrequency.Update10;
+
                 if (!isError)
                 {
                     try
@@ -251,7 +257,7 @@ namespace IngameScript
                     }
                     catch (Exception ex)
                     {
-                        string str = ex.Message + "\n\n" + ex.StackTrace;
+                        string str = ex.Message + "\n" + ex.StackTrace;
 
                         LCDDebug1.WriteText(str);
                     }

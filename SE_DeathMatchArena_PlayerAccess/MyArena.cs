@@ -7,6 +7,9 @@ using Sandbox.Game.EntityComponents;
 using Sandbox.ModAPI.Ingame;
 using Sandbox.ModAPI.Interfaces;
 using SpaceEngineers.Game.ModAPI.Ingame;
+using VRage.Game;
+using VRage.Game.ModAPI.Ingame;
+using VRage.ObjectBuilders;
 
 namespace IngameScript
 {
@@ -40,7 +43,8 @@ namespace IngameScript
         public IMyTextSurface LCDArenaBoardB;
         public IMyTargetDummyBlock DummyA;
         public IMyTargetDummyBlock DummyB;
-
+        public IMyStoreBlock PrepareZoneStoreA;
+        public IMyStoreBlock PrepareZoneStoreB;
 
         public List<long> teamA = new List<long>();
         public List<long> teamB = new List<long>();
@@ -57,8 +61,6 @@ namespace IngameScript
         public TimeSpan timeSpanShowWinner = TimeSpan.FromSeconds(20);
 
         public StateGame currentState;
-
-        public string lastMessage = "";
 
         public bool isArenaBeenUsed = false;
 
@@ -94,9 +96,21 @@ namespace IngameScript
             switch (currentState)
             {
                 case StateGame.NotReady:
-                    {                        
-                        LCDArenaBoardA.WriteText("");
-                        LCDArenaBoardB.WriteText("");
+                    {
+                        ArenaTurret1.ApplyAction("OnOff_On");
+                        ArenaTurret2.ApplyAction("OnOff_On");
+                        ArenaTurret3.ApplyAction("OnOff_On");
+                        ArenaTurret4.ApplyAction("OnOff_On");
+                        ArenaTurret5.ApplyAction("OnOff_On");
+                        ArenaTurret6.ApplyAction("OnOff_On");
+                                                                                                                                             
+                        teamA.Clear();
+
+                        teamB.Clear();
+
+                        isArenaBeenUsed = false;
+
+                        mainScript.controlRoom.isGameCanCancel = false;
 
                         currentState = StateGame.Ready;
 
@@ -108,10 +122,23 @@ namespace IngameScript
                     {
                         mainScript.controlRoom.RefreshState();
 
-                        if (timeStampShowWinner.HasValue && timeSpanShowWinner < (DateTime.Now - timeStampShowWinner.Value))
+                        if (timeStampShowWinner.HasValue)
+                        {
+                            if (timeSpanShowWinner < (DateTime.Now - timeStampShowWinner.Value))
+                            {
+                                LCDArenaState1.WriteText("СТАТУС АРЕНЫ:\n\nВ ОЖИДАНИИ\nНОВЫХ СМЕЛЬЧАКОВ");
+                                LCDArenaState2.WriteText("СТАТУС АРЕНЫ:\n\nВ ОЖИДАНИИ\nНОВЫХ СМЕЛЬЧАКОВ");
+                                LCDArenaBoardA.WriteText("");
+                                LCDArenaBoardB.WriteText("");
+                                timeStampShowWinner = null;
+                            }                            
+                        }
+                        else
                         {
                             LCDArenaState1.WriteText("СТАТУС АРЕНЫ:\n\nВ ОЖИДАНИИ\nНОВЫХ СМЕЛЬЧАКОВ");
                             LCDArenaState2.WriteText("СТАТУС АРЕНЫ:\n\nВ ОЖИДАНИИ\nНОВЫХ СМЕЛЬЧАКОВ");
+                            LCDArenaBoardA.WriteText("");
+                            LCDArenaBoardB.WriteText("");
                             timeStampShowWinner = null;
                         }
 
@@ -127,6 +154,8 @@ namespace IngameScript
                             PrepareZoneTurretB2.ApplyAction("OnOff_Off");
 
                             timeStampPrepare = DateTime.Now;
+
+                            ReloadStores();
 
                             currentState = StateGame.Prepare;
 
@@ -200,6 +229,12 @@ namespace IngameScript
                             PrepareZoneDoorB.OpenDoor();
                             ArenaDoorA.OpenDoor();
                             ArenaDoorB.OpenDoor();
+                            ArenaTurret1.ApplyAction("OnOff_Off");
+                            ArenaTurret2.ApplyAction("OnOff_Off");
+                            ArenaTurret3.ApplyAction("OnOff_Off");
+                            ArenaTurret4.ApplyAction("OnOff_Off");
+                            ArenaTurret5.ApplyAction("OnOff_Off");
+                            ArenaTurret6.ApplyAction("OnOff_Off");
 
                             LCDArenaEntranceA2.WriteText("");
 
@@ -211,7 +246,7 @@ namespace IngameScript
 
                             timeStampBattle = DateTime.Now;
 
-                            currentState = StateGame.ClosingDoors;
+                            currentState = StateGame.Battling;
 
                             mainScript.Save();
                         }
@@ -219,67 +254,42 @@ namespace IngameScript
                     break;
 
                 case StateGame.ClosingDoors:
-                    {
-                        RefreshGateways();
-
-                        LCDArenaEntranceA1.WriteText("ВЫХОД НА АРЕНУ\nЗАКРОЕТСЯ ЧЕРЕЗ:\n"
-                            + Math.Truncate((timeSpanClosePrepareZone - (DateTime.Now - timeStampClosePrepareZone.Value)).TotalSeconds));
-
-                        LCDArenaEntranceB1.WriteText("ВЫХОД НА АРЕНУ\nЗАКРОЕТСЯ ЧЕРЕЗ:\n"
-                            + Math.Truncate((timeSpanClosePrepareZone - (DateTime.Now - timeStampClosePrepareZone.Value)).TotalSeconds));
-
-                        LCDArenaState1.WriteText("СТАТУС АРЕНЫ:\n\nПРОВОДИТСЯ\nМАТЧ "
-                            + mainScript.controlRoom.modeSelected.ToString() + "x" + mainScript.controlRoom.modeSelected.ToString()
-                            + "\n" + "ОСТАЛОСЬ: " + Math.Truncate((timeSpanBattle - (DateTime.Now - timeStampBattle.Value)).TotalSeconds));
-
-                        LCDArenaState2.WriteText("СТАТУС АРЕНЫ:\n\nПРОВОДИТСЯ\nМАТЧ "
-                            + mainScript.controlRoom.modeSelected.ToString() + "x" + mainScript.controlRoom.modeSelected.ToString()
-                            + "\n" + "ОСТАЛОСЬ: " + Math.Truncate((timeSpanBattle - (DateTime.Now - timeStampBattle.Value)).TotalSeconds));
-
-                        List<MyDetectedEntityInfo> entities = new List<MyDetectedEntityInfo>();
-                        ArenaMainSensor.DetectedEntities(entities);
-                        int sizeTeamA = 0;
-                        int sizeTeamB = 0;
-                        foreach (var entity in entities)
-                        {
-                            if (teamA.Contains(entity.EntityId)) sizeTeamA++;
-                            if (teamB.Contains(entity.EntityId)) sizeTeamB++;
-                        }
-
-                        string strA = "КОМАНДА \"А\"\n" + sizeTeamA + "/" + mainScript.controlRoom.modeSelected
-                            + "\nВРЕМЯ МАТЧА\n" + Math.Truncate((DateTime.Now - timeStampBattle.Value).TotalSeconds)
-                            + "/" + Math.Truncate(timeSpanBattle.TotalSeconds);
-                        string strB = "КОМАНДА \"B\"\n" + sizeTeamB + "/" + mainScript.controlRoom.modeSelected
-                            + "\nВРЕМЯ МАТЧА\n" + Math.Truncate((DateTime.Now - timeStampBattle.Value).TotalSeconds)
-                            + "/" + Math.Truncate(timeSpanBattle.TotalSeconds);
-
-                        LCDArenaBoardA.WriteText(strA);
-                        LCDArenaBoardB.WriteText(strB);
-
-                        if (timeStampClosePrepareZone.HasValue && timeSpanClosePrepareZone < (DateTime.Now - timeStampClosePrepareZone.Value))
-                        {
-                            ArenaDoorA.CloseDoor();
-                            ArenaDoorB.CloseDoor();
-                            PrepareZoneTurretA1.ApplyAction("OnOff_On");
-                            PrepareZoneTurretA2.ApplyAction("OnOff_On");
-                            PrepareZoneTurretB1.ApplyAction("OnOff_On");
-                            PrepareZoneTurretB2.ApplyAction("OnOff_On");
-
-                            LCDArenaEntranceA1.WriteText("");
-
-                            LCDArenaEntranceB1.WriteText("");
-
-                            timeStampClosePrepareZone = null;
-
-                            currentState = StateGame.Battling;
-
-                            mainScript.Save();
-                        }                                             
+                    {                        
+                                                       
                     }
                     break;
 
                 case StateGame.Battling:
                     {
+                        if (timeStampClosePrepareZone.HasValue)
+                        {
+                            if (timeSpanClosePrepareZone < (DateTime.Now - timeStampClosePrepareZone.Value))
+                            {
+                                ArenaDoorA.CloseDoor();
+                                ArenaDoorB.CloseDoor();
+                                PrepareZoneTurretA1.ApplyAction("OnOff_On");
+                                PrepareZoneTurretA2.ApplyAction("OnOff_On");
+                                PrepareZoneTurretB1.ApplyAction("OnOff_On");
+                                PrepareZoneTurretB2.ApplyAction("OnOff_On");
+
+                                LCDArenaEntranceA1.WriteText("");
+
+                                LCDArenaEntranceB1.WriteText("");
+
+                                timeStampClosePrepareZone = null;
+                            }
+                            else
+                            {
+                                RefreshGateways();
+
+                                LCDArenaEntranceA1.WriteText("ВЫХОД НА АРЕНУ\nЗАКРОЕТСЯ ЧЕРЕЗ:\n"
+                                    + Math.Truncate((timeSpanClosePrepareZone - (DateTime.Now - timeStampClosePrepareZone.Value)).TotalSeconds));
+
+                                LCDArenaEntranceB1.WriteText("ВЫХОД НА АРЕНУ\nЗАКРОЕТСЯ ЧЕРЕЗ:\n"
+                                    + Math.Truncate((timeSpanClosePrepareZone - (DateTime.Now - timeStampClosePrepareZone.Value)).TotalSeconds));
+                            }
+                        }
+
                         LCDArenaState1.WriteText("СТАТУС АРЕНЫ:\n\nПРОВОДИТСЯ\nМАТЧ "
                             + mainScript.controlRoom.modeSelected.ToString() + "x" + mainScript.controlRoom.modeSelected.ToString()
                             + "\n" + "ОСТАЛОСЬ: " + Math.Truncate((timeSpanBattle - (DateTime.Now - timeStampBattle.Value)).TotalSeconds));
@@ -292,10 +302,19 @@ namespace IngameScript
                         ArenaMainSensor.DetectedEntities(entities);
                         int sizeTeamA = 0;
                         int sizeTeamB = 0;
-                        foreach (var entity in entities)
+
+                        if (timeStampClosePrepareZone.HasValue)
                         {
-                            if (teamA.Contains(entity.EntityId)) sizeTeamA++;
-                            if (teamB.Contains(entity.EntityId)) sizeTeamB++;
+                            sizeTeamA = teamA.Count;
+                            sizeTeamB = teamB.Count;
+                        }
+                        else
+                        {
+                            foreach (var entity in entities)
+                            {
+                                if (teamA.Contains(entity.EntityId)) sizeTeamA++;
+                                if (teamB.Contains(entity.EntityId)) sizeTeamB++;
+                            }
                         }
 
                         string strA = "КОМАНДА \"А\"\n" + sizeTeamA + "/" + mainScript.controlRoom.modeSelected 
@@ -305,38 +324,42 @@ namespace IngameScript
                             + "\nВРЕМЯ МАТЧА\n" + Math.Truncate((DateTime.Now - timeStampBattle.Value).TotalSeconds)
                             + "/" + Math.Truncate(timeSpanBattle.TotalSeconds);
 
-                        if (/*!ArenaMainSensor.IsActive ||*/ (timeStampBattle.HasValue && timeSpanBattle < (DateTime.Now - timeStampBattle.Value)))
+                        if (!timeStampClosePrepareZone.HasValue)
                         {
-                            if (sizeTeamA == sizeTeamB)
+                            if ((sizeTeamA == 0) || (sizeTeamB == 0)
+                            || (timeStampBattle.HasValue && timeSpanBattle < (DateTime.Now - timeStampBattle.Value)))
                             {
-                                strA = "НИЧЬЯ!!!\n\nДРУЖБА ПОБЕДИЛА!!!";
+                                if (sizeTeamA == sizeTeamB)
+                                {
+                                    strA = "НИЧЬЯ!!!\n\nДРУЖБА ПОБЕДИЛА!!!";
+                                }
+                                else if (sizeTeamA < sizeTeamB)
+                                {
+                                    strA = "КОМАНДА \"B\"\n\nОДЕРЖАЛА ПОБЕДУ!!!";
+                                }
+                                else if (sizeTeamA > sizeTeamB)
+                                {
+                                    strA = "КОМАНДА \"A\"\n\nОДЕРЖАЛА ПОБЕДУ!!!";
+                                }
+                                else
+                                {
+
+                                }
+
+                                strB = strA;
+                                winner = strA;
+
+                                LCDArenaState1.WriteText(winner);
+                                LCDArenaState2.WriteText(winner);
+
+                                timeStampBattle = null;
+
+                                timeStampShowWinner = DateTime.Now;
+
+                                currentState = StateGame.Ending;
+
+                                mainScript.Save();
                             }
-                            else if (sizeTeamA < sizeTeamB)
-                            {
-                                strA = "КОМАНДА \"B\"\n\nОДЕРЖАЛА ПОБЕДУ!!!";
-                            }
-                            else if (sizeTeamA > sizeTeamB)
-                            {
-                                strA = "КОМАНДА \"A\"\n\nОДЕРЖАЛА ПОБЕДУ!!!";
-                            }
-                            else
-                            {
-
-                            }
-
-                            strB = strA;
-                            winner = strA;
-
-                            LCDArenaState1.WriteText(winner);
-                            LCDArenaState2.WriteText(winner);
-
-                            timeStampBattle = null;
-
-                            timeStampShowWinner = DateTime.Now;
-
-                            currentState = StateGame.Ending;
-
-                            mainScript.Save();
                         }
 
                         LCDArenaBoardA.WriteText(strA);
@@ -348,30 +371,80 @@ namespace IngameScript
                     {
                         
 
-                        teamA.Clear();
-
-                        teamB.Clear();
-
-
-
-                        /*
-                        if (timeSpanClosePrepareZone < DateTime.Now - timeStampClosePrepareZone)
+                        if (!ArenaMainSensor.IsActive)
                         {
-                            ArenaDoorA.CloseDoor();
-                            ArenaDoorB.CloseDoor();
-                            PrepareZoneTurretA1.ApplyAction("OnOff_On");
-                            PrepareZoneTurretA2.ApplyAction("OnOff_On");
-                            PrepareZoneTurretB1.ApplyAction("OnOff_On");
-                            PrepareZoneTurretB2.ApplyAction("OnOff_On");
+                            currentState = StateGame.NotReady;
+
+                            mainScript.Save();
                         }
-                        */
+                                                   
+
                     }
                     break;
 
                 default:
-                    lastMessage = "ArenaErrorAE1";
+                    mainScript.Echo("ArenaErrorAE1");
                     break;
             }
+        }
+
+        public void ReloadStores()
+        {
+            List<MyStoreQueryItem> itemsA = new List<MyStoreQueryItem>();
+            PrepareZoneStoreA.GetPlayerStoreItems(itemsA);
+            foreach (var item in itemsA) PrepareZoneStoreA.CancelStoreItem(item.Id);
+
+            List<MyStoreQueryItem> itemsB = new List<MyStoreQueryItem>();
+            PrepareZoneStoreB.GetPlayerStoreItems(itemsB);
+            foreach (var item in itemsB) PrepareZoneStoreB.CancelStoreItem(item.Id);
+
+            long insertedId;
+                        
+            for (int i = 0; i < mainScript.controlRoom.modeSelected; i++)
+            {
+                PrepareZoneStoreA.InsertOffer(
+                    new MyStoreItemDataSimple(
+                        MyDefinitionId.Parse("MyObjectBuilder_PhysicalGunObject/AutomaticRifleItem"), 1, 100), out insertedId);
+                PrepareZoneStoreA.InsertOffer(
+                    new MyStoreItemDataSimple(
+                        MyDefinitionId.Parse("MyObjectBuilder_AmmoMagazine/AutomaticRifleGun_Mag_20rd"), 10, 20), out insertedId);
+
+                PrepareZoneStoreB.InsertOffer(
+                    new MyStoreItemDataSimple(
+                        MyDefinitionId.Parse("MyObjectBuilder_PhysicalGunObject/AutomaticRifleItem"), 1, 100), out insertedId);
+                PrepareZoneStoreB.InsertOffer(
+                    new MyStoreItemDataSimple(
+                        MyDefinitionId.Parse("MyObjectBuilder_AmmoMagazine/AutomaticRifleGun_Mag_20rd"), 10, 20), out insertedId);
+            }
+
+            var temp = new MyStoreItemDataSimple();
+
+            PrepareZoneStoreA.InsertOffer(
+                    new MyStoreItemDataSimple(
+                        MyDefinitionId.Parse("MyObjectBuilder_PhysicalGunObject/AutomaticRifleItem"), 1, 100), out insertedId);
+            PrepareZoneStoreA.InsertOffer(
+                new MyStoreItemDataSimple(
+                    MyDefinitionId.Parse("MyObjectBuilder_AmmoMagazine/AutomaticRifleGun_Mag_20rd"), 10, 20), out insertedId);
+
+            PrepareZoneStoreA.InsertOrder(
+                new MyStoreItemDataSimple(
+                    MyDefinitionId.Parse("MyObjectBuilder_PhysicalGunObject/WelderItem"), mainScript.controlRoom.modeSelected, 100), out insertedId);
+            PrepareZoneStoreA.InsertOrder(
+                new MyStoreItemDataSimple(
+                    MyDefinitionId.Parse("MyObjectBuilder_PhysicalGunObject/AngleGrinderItem"), mainScript.controlRoom.modeSelected, 100), out insertedId);
+            PrepareZoneStoreA.InsertOrder(
+                new MyStoreItemDataSimple(
+                    MyDefinitionId.Parse("MyObjectBuilder_PhysicalGunObject/HandDrillItem"), mainScript.controlRoom.modeSelected, 100), out insertedId);
+
+            PrepareZoneStoreB.InsertOrder(
+                new MyStoreItemDataSimple(
+                    MyDefinitionId.Parse("MyObjectBuilder_PhysicalGunObject/WelderItem"), mainScript.controlRoom.modeSelected, 100), out insertedId);
+            PrepareZoneStoreB.InsertOrder(
+                new MyStoreItemDataSimple(
+                    MyDefinitionId.Parse("MyObjectBuilder_PhysicalGunObject/AngleGrinderItem"), mainScript.controlRoom.modeSelected, 100), out insertedId);
+            PrepareZoneStoreB.InsertOrder(
+                new MyStoreItemDataSimple(
+                    MyDefinitionId.Parse("MyObjectBuilder_PhysicalGunObject/HandDrillItem"), mainScript.controlRoom.modeSelected, 100), out insertedId);
         }
 
         public void RefreshGateways()

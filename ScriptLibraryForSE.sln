@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_Sorter_TerraNova", "SE_S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_Missile_DeX_1", "SE_Missile_DeX_1\SE_Missile_DeX_1.csproj", "{FF4E6BA6-2F39-40E4-A3E7-7ECCCF139B66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_Trader_Moral_1", "SE_Trader_Moral_1\SE_Trader_Moral_1.csproj", "{5C506A34-106F-4B0B-A2F3-5F8966008071}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_Trader_Moral_2", "SE_Trader_Moral_2\SE_Trader_Moral_2.csproj", "{79DEFDA8-5A49-4191-BFD5-2A3166F56F64}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_TriangulateRadar", "SE_TriangulateRadar\SE_TriangulateRadar.csproj", "{28671A8A-13BB-4D58-936D-0480BD759FCA}"
@@ -33,7 +31,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_Trader_DeX_NotActual", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_DeathMatchArena_PlayerAccess", "SE_DeathMatchArena_PlayerAccess\SE_DeathMatchArena_PlayerAccess.csproj", "{F6BBC5B5-D4B6-4533-A772-2AB57400116C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolsPropsFuncs", "ToolsPropsFuncs\ToolsPropsFuncs.csproj", "{26DD66D4-8896-4C6F-9809-6215A59D79C3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_ToolsPropsFuncs", "ToolsPropsFuncs\SE_ToolsPropsFuncs.csproj", "{26DD66D4-8896-4C6F-9809-6215A59D79C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,8 +46,6 @@ Global
 		{0E0E0354-D4C8-453A-AF1E-A5AA3787AD5E}.Debug|x64.Build.0 = Debug|x64
 		{FF4E6BA6-2F39-40E4-A3E7-7ECCCF139B66}.Debug|x64.ActiveCfg = Debug|x64
 		{FF4E6BA6-2F39-40E4-A3E7-7ECCCF139B66}.Debug|x64.Build.0 = Debug|x64
-		{5C506A34-106F-4B0B-A2F3-5F8966008071}.Debug|x64.ActiveCfg = Debug|x64
-		{5C506A34-106F-4B0B-A2F3-5F8966008071}.Debug|x64.Build.0 = Debug|x64
 		{79DEFDA8-5A49-4191-BFD5-2A3166F56F64}.Debug|x64.ActiveCfg = Debug|x64
 		{79DEFDA8-5A49-4191-BFD5-2A3166F56F64}.Debug|x64.Build.0 = Debug|x64
 		{28671A8A-13BB-4D58-936D-0480BD759FCA}.Debug|x64.ActiveCfg = Debug|x64
