@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_Trader_DeX_NotActual", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_DeathMatchArena_PlayerAccess", "SE_DeathMatchArena_PlayerAccess\SE_DeathMatchArena_PlayerAccess.csproj", "{F6BBC5B5-D4B6-4533-A772-2AB57400116C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolsPropsFuncs", "ToolsPropsFuncs\ToolsPropsFuncs.csproj", "{26DD66D4-8896-4C6F-9809-6215A59D79C3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -68,6 +70,8 @@ Global
 		{4A8C8712-FBB9-4371-8727-7CF089DE91A4}.Debug|x64.Build.0 = Debug|x64
 		{F6BBC5B5-D4B6-4533-A772-2AB57400116C}.Debug|x64.ActiveCfg = Debug|x64
 		{F6BBC5B5-D4B6-4533-A772-2AB57400116C}.Debug|x64.Build.0 = Debug|x64
+		{26DD66D4-8896-4C6F-9809-6215A59D79C3}.Debug|x64.ActiveCfg = Debug|x64
+		{26DD66D4-8896-4C6F-9809-6215A59D79C3}.Debug|x64.Build.0 = Debug|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

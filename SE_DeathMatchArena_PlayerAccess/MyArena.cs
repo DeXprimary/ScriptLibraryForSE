@@ -27,6 +27,8 @@ namespace IngameScript
         public IMyLargeInteriorTurret ArenaTurret2;
         public IMyLargeInteriorTurret ArenaTurret3;
         public IMyLargeInteriorTurret ArenaTurret4;
+        public IMyLargeInteriorTurret ArenaTurret5;
+        public IMyLargeInteriorTurret ArenaTurret6;
         public IMyTextSurface LCDMainIntro;
         public IMyTextSurface LCDArenaEntranceA1;
         public IMyTextSurface LCDArenaEntranceA2;
@@ -36,21 +38,23 @@ namespace IngameScript
         public IMyTextSurface LCDArenaState2;
         public IMyTextSurface LCDArenaBoardA;
         public IMyTextSurface LCDArenaBoardB;
-        
+        public IMyTargetDummyBlock DummyA;
+        public IMyTargetDummyBlock DummyB;
+
 
         public List<long> teamA = new List<long>();
         public List<long> teamB = new List<long>();
 
         public DateTime? timeStampPrepare;
-        public TimeSpan timeSpanPrepare = TimeSpan.FromSeconds(60);
+        public TimeSpan timeSpanPrepare = TimeSpan.FromSeconds(40);
         public DateTime? timeStampRunning;
-        public TimeSpan timeSpanRunning = TimeSpan.FromSeconds(30);
+        public TimeSpan timeSpanRunning = TimeSpan.FromSeconds(10);
         public DateTime? timeStampClosePrepareZone;
-        public TimeSpan timeSpanClosePrepareZone = TimeSpan.FromSeconds(30);
+        public TimeSpan timeSpanClosePrepareZone = TimeSpan.FromSeconds(10);
         public DateTime? timeStampBattle;
-        public TimeSpan timeSpanBattle = TimeSpan.FromSeconds(70);
+        public TimeSpan timeSpanBattle = TimeSpan.FromSeconds(50);
         public DateTime? timeStampShowWinner;
-        public TimeSpan timeSpanShowWinner = TimeSpan.FromSeconds(30);
+        public TimeSpan timeSpanShowWinner = TimeSpan.FromSeconds(20);
 
         public StateGame currentState;
 

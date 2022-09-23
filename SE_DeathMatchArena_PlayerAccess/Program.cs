@@ -96,6 +96,8 @@ namespace IngameScript
             arena.ArenaTurret2 = (IMyLargeInteriorTurret)GridTerminalSystem.GetBlockWithName("ArenaTurret2");
             arena.ArenaTurret3 = (IMyLargeInteriorTurret)GridTerminalSystem.GetBlockWithName("ArenaTurret3");
             arena.ArenaTurret4 = (IMyLargeInteriorTurret)GridTerminalSystem.GetBlockWithName("ArenaTurret4");
+            arena.ArenaTurret5 = (IMyLargeInteriorTurret)GridTerminalSystem.GetBlockWithName("ArenaTurret5");
+            arena.ArenaTurret6 = (IMyLargeInteriorTurret)GridTerminalSystem.GetBlockWithName("ArenaTurret6");
             arena.LCDMainIntro = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDMainIntro");
             arena.LCDArenaEntranceA1 = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDArenaEntranceA1");
             arena.LCDArenaEntranceA2 = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDArenaEntranceA2");
