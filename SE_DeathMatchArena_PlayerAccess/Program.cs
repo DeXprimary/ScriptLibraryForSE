@@ -33,6 +33,10 @@ namespace IngameScript
 
         public string[] storedValues;
 
+        public IMyTextSurface LCDDebug1;
+
+        bool isError = false;
+
         public Program()
         {
             Me.Enabled = true;
@@ -69,7 +73,7 @@ namespace IngameScript
                 LCDControlRoom = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDControlRoom"),
             };
 
-            if (Storage.Length > 0)
+            if (false/*Storage.Length > 0*/)
             {
                 storedValues = Storage.Split(';');
                 arena = new MyArena(int.Parse(storedValues[0]), this);
@@ -82,17 +86,27 @@ namespace IngameScript
             arena.PrepareZoneSensorB = (IMySensorBlock)GridTerminalSystem.GetBlockWithName("PrepareZoneSensorB");
             arena.PrepareZoneDoorA = (IMyDoor)GridTerminalSystem.GetBlockWithName("PrepareZoneDoorA");
             arena.PrepareZoneDoorB = (IMyDoor)GridTerminalSystem.GetBlockWithName("PrepareZoneDoorB");
-            arena.ArenaDoorA = (IMyDoor)GridTerminalSystem.GetBlockWithName("ArenaDoorA");
-            arena.ArenaDoorB = (IMyDoor)GridTerminalSystem.GetBlockWithName("ArenaDoorB");
-            arena.PrepareZoneTurretA1 = (IMyLargeInteriorTurret)GridTerminalSystem.GetBlockWithName("PrepareZoneTurretA1");
-            arena.PrepareZoneTurretA2 = (IMyLargeInteriorTurret)GridTerminalSystem.GetBlockWithName("PrepareZoneTurretA2");
-            arena.PrepareZoneTurretB1 = (IMyLargeInteriorTurret)GridTerminalSystem.GetBlockWithName("PrepareZoneTurretB1");
-            arena.PrepareZoneTurretB2 = (IMyLargeInteriorTurret)GridTerminalSystem.GetBlockWithName("PrepareZoneTurretB2");
+            arena.ArenaDoorA = (IMyDoor)GridTerminalSystem.GetBlockWithName("ArenaEntranceDoorA");
+            arena.ArenaDoorB = (IMyDoor)GridTerminalSystem.GetBlockWithName("ArenaEntranceDoorB");
+            arena.PrepareZoneTurretA1 = (IMyLargeInteriorTurret)GridTerminalSystem.GetBlockWithName("TurretArenaEntranceA1");
+            arena.PrepareZoneTurretA2 = (IMyLargeInteriorTurret)GridTerminalSystem.GetBlockWithName("TurretArenaEntranceA2");
+            arena.PrepareZoneTurretB1 = (IMyLargeInteriorTurret)GridTerminalSystem.GetBlockWithName("TurretArenaEntranceB1");
+            arena.PrepareZoneTurretB2 = (IMyLargeInteriorTurret)GridTerminalSystem.GetBlockWithName("TurretArenaEntranceB2");
             arena.ArenaTurret1 = (IMyLargeInteriorTurret)GridTerminalSystem.GetBlockWithName("ArenaTurret1");
             arena.ArenaTurret2 = (IMyLargeInteriorTurret)GridTerminalSystem.GetBlockWithName("ArenaTurret2");
             arena.ArenaTurret3 = (IMyLargeInteriorTurret)GridTerminalSystem.GetBlockWithName("ArenaTurret3");
             arena.ArenaTurret4 = (IMyLargeInteriorTurret)GridTerminalSystem.GetBlockWithName("ArenaTurret4");
-            arena.LCDIntro = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDIntro");
+            arena.LCDMainIntro = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDMainIntro");
+            arena.LCDArenaEntranceA1 = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDArenaEntranceA1");
+            arena.LCDArenaEntranceA2 = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDArenaEntranceA2");
+            arena.LCDArenaEntranceB1 = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDArenaEntranceB1");
+            arena.LCDArenaEntranceB2 = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDArenaEntranceB2");
+            arena.LCDArenaState1 = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDArenaState1");
+            arena.LCDArenaState2 = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDArenaState2");
+            arena.LCDArenaBoardA = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDArenaBoardA");
+            arena.LCDArenaBoardB = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDArenaBoardB");
+
+            LCDDebug1 = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDDebug1");
 
             Runtime.UpdateFrequency = UpdateFrequency.Update10;
         }
@@ -195,13 +209,51 @@ namespace IngameScript
                 {
                     controlRoom.ResetControlRoom();
                 }
+                else if (argument.Contains("PrepareZoneSensorA"))
+                {
+                    string action = argument.Substring(argument.IndexOf("_") + 1);
+
+                    if (action == "on")
+                    {
+                        arena.AddUserToTeam(true);
+                    }
+                    else if (action == "off")
+                    {
+                        
+                    }
+                }
+                else if (argument.Contains("PrepareZoneSensorB"))
+                {
+                    string action = argument.Substring(argument.IndexOf("_") + 1);
+
+                    if (action == "on")
+                    {
+                        arena.AddUserToTeam(false);
+                    }
+                    else if (action == "off")
+                    {
+
+                    }
+                }
                 else Echo("Do nothing...");
 
             }
 
             if ((updateSource & (UpdateType.Update100 | UpdateType.Update10 | UpdateType.Update1)) != 0)
             {
-                arena.RefreshState();
+                if (!isError)
+                {
+                    try
+                    {
+                        arena.RefreshState();
+                    }
+                    catch (Exception ex)
+                    {
+                        string str = ex.Message + "\n\n" + ex.StackTrace;
+
+                        LCDDebug1.WriteText(str);
+                    }
+                }                                
             }                        
         }
     }

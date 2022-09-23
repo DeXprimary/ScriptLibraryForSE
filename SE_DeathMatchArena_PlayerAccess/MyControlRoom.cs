@@ -20,8 +20,8 @@ namespace IngameScript
         public bool isRoomReseted = true;
 
         public bool isModeSelected = false;
-        public int modeSelected = 0;
         public bool isModeConfirm = false;
+        public int modeSelected = 0;
         public int currentPage = 0;
         public int maxCountPage = 3;
 
@@ -52,9 +52,13 @@ namespace IngameScript
                             {
                                 if (isRoomReseted)
                                 {
+                                    modeSelected = 0;
+
                                     currentState = StateControlRoom.Ready;
 
                                     isRoomReseted = false;
+
+                                    isGameNeedCancel = false;
                                 }
                                 else ResetControlRoom();
                             }
@@ -157,7 +161,7 @@ namespace IngameScript
                     {
                         LCDControlRoom.WriteText("ОШИБКА! CRE1");
 
-                        if (!VolumeSensor.IsActive) currentState = StateControlRoom.Ready;
+                        if (!VolumeSensor.IsActive) currentState = StateControlRoom.NotReady;
                     }
                     break;
             }
@@ -280,8 +284,6 @@ namespace IngameScript
             isModeSelected = false;
 
             isModeConfirm = false;
-
-            modeSelected = 0;
 
             currentPage = 0;
 

@@ -52,6 +52,7 @@ namespace IngameScript
 
                                 isGatewayReseted = false;
                             }
+                            else ResetGateway();
                         }
                         else
                         {
@@ -64,7 +65,7 @@ namespace IngameScript
                     {
                         LCDAction.WriteText("СВОБОДНЫЙ ШЛЮЗ");
 
-                        if (VolumeSensor.IsActive && mainScript.arena.currentState == MyArena.StateGame.Prepare)
+                        if (VolumeSensor.IsActive && mainScript.arena.currentState <= MyArena.StateGame.ClosingDoors)
                         {
                             if (CheckSoloUser())
                             {
@@ -81,7 +82,7 @@ namespace IngameScript
 
                 case StateGateway.UserInside:
                     {
-                        if (VolumeSensor.IsActive && mainScript.arena.currentState == MyArena.StateGame.Prepare)
+                        if (VolumeSensor.IsActive && mainScript.arena.currentState <= MyArena.StateGame.ClosingDoors)
                         {
                             if (timeStampStartHydrogenChecking.HasValue)
                             {
@@ -158,7 +159,7 @@ namespace IngameScript
         {
             if (On)
             {
-                if (currentState >= StateGateway.Ready)
+                if (currentState >= StateGateway.Ready && mainScript.arena.currentState <= MyArena.StateGame.ClosingDoors)
                 {
                     FirstDoor.CloseDoor();
                 }                    
