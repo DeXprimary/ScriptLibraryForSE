@@ -21,7 +21,7 @@ namespace IngameScript
         public StateGateway currentState = StateGateway.NotReady;
         public bool isGatewayReseted = true;
 
-        public TimeSpan timerPlayerCheckHydrogen = TimeSpan.FromSeconds(10);
+        public TimeSpan timerPlayerCheckHydrogen = TimeSpan.FromSeconds(45);
         public DateTime? timeStampStartHydrogenChecking;
         public bool isHydrogenChecked = false;
 
@@ -44,7 +44,7 @@ namespace IngameScript
             {
                 case StateGateway.NotReady:
                     {
-                        if (FirstDoor.OpenRatio == 1 && SecondDoor.OpenRatio == 0 && !isNeedReset)
+                        if (FirstDoor.OpenRatio == 1 && SecondDoor.OpenRatio == 0)
                         {
                             if (isGatewayReseted)
                             {
@@ -77,6 +77,7 @@ namespace IngameScript
                             }
                             else currentState = StateGateway.Error;
                         }
+                        
                     }
                     break;
 
@@ -159,7 +160,8 @@ namespace IngameScript
         {
             if (On)
             {
-                if (currentState >= StateGateway.Ready && mainScript.arena.currentState <= MyArena.StateGame.ClosingDoors)
+                if ((currentState == StateGateway.Ready || currentState == StateGateway.UserInside) 
+                    && (mainScript.arena.currentState >= MyArena.StateGame.Prepare && mainScript.arena.currentState < MyArena.StateGame.Battling))
                 {
                     FirstDoor.CloseDoor();
                 }                    
@@ -184,7 +186,7 @@ namespace IngameScript
 
             enteredCode = "";
 
-            isNeedReset = false;
+            isNeedReset = true;
 
             isTokenVerifed = false;
 
@@ -203,6 +205,8 @@ namespace IngameScript
                 if (!VolumeSensor.IsActive)
                 {                    
                     isGatewayReseted = true;
+
+                    isNeedReset = false;
                 }                
             }                
         }

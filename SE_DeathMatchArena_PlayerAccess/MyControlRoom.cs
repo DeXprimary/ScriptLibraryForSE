@@ -140,7 +140,7 @@ namespace IngameScript
 
                                 string str = "Сообщи этот токен\nтолько участникам матча:\n\n" + token;
 
-                                LCDControlRoom.WriteText(str);                                
+                                LCDControlRoom.WriteText(str);
                             }
                         }
                         else ResetControlRoom();
@@ -151,7 +151,7 @@ namespace IngameScript
                     {
                         if (VolumeSensor.IsActive)
                         {
-                            
+
                         }
                         else ResetControlRoom();
                     }

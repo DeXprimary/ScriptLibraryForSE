@@ -27,7 +27,7 @@ namespace IngameScript
         
         public MyGateway[] gateways = new MyGateway[6];
 
-        public MyControlRoom controlRoom;
+        internal MyControlRoom controlRoom;
 
         public MyArena arena;
 
@@ -35,11 +35,23 @@ namespace IngameScript
 
         public IMyTextSurface LCDDebug1;
 
+        public IMyDoor StaffOnlyDoor1Top;
+        public IMyDoor StaffOnlyDoor2Mid;
+        public IMyDoor StaffOnlyDoorAPrepareZone;
+        public IMyDoor StaffOnlyDoorBPrepareZone;
+        public List<IMyDoor> StaffDoors;
+        
         bool isError = false;
 
         public Program()
         {
             Me.Enabled = true;
+
+            StaffOnlyDoor1Top = (IMyDoor)GridTerminalSystem.GetBlockWithName("StaffOnlyDoor1Top");
+            StaffOnlyDoor2Mid = (IMyDoor)GridTerminalSystem.GetBlockWithName("StaffOnlyDoor2Mid");
+            StaffOnlyDoorAPrepareZone = (IMyDoor)GridTerminalSystem.GetBlockWithName("StaffOnlyDoorAPrepareZone");
+            StaffOnlyDoorBPrepareZone = (IMyDoor)GridTerminalSystem.GetBlockWithName("StaffOnlyDoorBPrepareZone");
+            StaffDoors = new List<IMyDoor> { StaffOnlyDoor1Top, StaffOnlyDoor2Mid, StaffOnlyDoorAPrepareZone, StaffOnlyDoorBPrepareZone };
 
             for (int i = 0; i < 3; i++)
             {
@@ -73,17 +85,23 @@ namespace IngameScript
                 LCDControlRoom = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDControlRoom"),
             };
 
-            if (false/*Storage.Length > 0*/)
+            if (Storage.Length > 0)
             {
                 storedValues = Storage.Split(';');
-                arena = new MyArena(int.Parse(storedValues[0]), this);
+                arena = new MyArena(int.Parse(storedValues[0]),
+                    (IMySensorBlock)GridTerminalSystem.GetBlockWithName("PrepareZoneSensorA"),
+                    (IMySensorBlock)GridTerminalSystem.GetBlockWithName("PrepareZoneSensorB"), 
+                    this);
                 controlRoom.modeSelected = int.Parse(storedValues[1]);
             }
-            else arena = new MyArena(this);
+            else arena = new MyArena(
+                (IMySensorBlock)GridTerminalSystem.GetBlockWithName("PrepareZoneSensorA"),                   
+                (IMySensorBlock)GridTerminalSystem.GetBlockWithName("PrepareZoneSensorB"), 
+                this);
 
             arena.ArenaMainSensor = (IMySensorBlock)GridTerminalSystem.GetBlockWithName("ArenaMainSensor");
-            arena.PrepareZoneSensorA = (IMySensorBlock)GridTerminalSystem.GetBlockWithName("PrepareZoneSensorA");
-            arena.PrepareZoneSensorB = (IMySensorBlock)GridTerminalSystem.GetBlockWithName("PrepareZoneSensorB");
+            //arena.PrepareZoneSensorA = (IMySensorBlock)GridTerminalSystem.GetBlockWithName("PrepareZoneSensorA");
+            //arena.PrepareZoneSensorB = (IMySensorBlock)GridTerminalSystem.GetBlockWithName("PrepareZoneSensorB");
             arena.PrepareZoneDoorA = (IMyDoor)GridTerminalSystem.GetBlockWithName("PrepareZoneDoorA");
             arena.PrepareZoneDoorB = (IMyDoor)GridTerminalSystem.GetBlockWithName("PrepareZoneDoorB");
             arena.ArenaDoorA = (IMyDoor)GridTerminalSystem.GetBlockWithName("ArenaEntranceDoorA");
@@ -107,11 +125,17 @@ namespace IngameScript
             arena.LCDArenaState2 = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDArenaState2");
             arena.LCDArenaBoardA = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDArenaBoardA");
             arena.LCDArenaBoardB = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDArenaBoardB");
+            arena.LCDRespZoneA = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDRespZoneA");
+            arena.LCDRespZoneB = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDRespZoneB");
             arena.PrepareZoneStoreA = (IMyStoreBlock)GridTerminalSystem.GetBlockWithName("PrepareZoneStoreA");
             arena.PrepareZoneStoreB = (IMyStoreBlock)GridTerminalSystem.GetBlockWithName("PrepareZoneStoreB");
-
+            arena.CargoMain = (IMyCargoContainer)GridTerminalSystem.GetBlockWithName("CargoMain");
+            arena.ArenaConnectorA = (IMyShipConnector)GridTerminalSystem.GetBlockWithName("ArenaConnectorA");
+            arena.ArenaConnectorB = (IMyShipConnector)GridTerminalSystem.GetBlockWithName("ArenaConnectorB");
+            arena.DummyA = (IMyTerminalBlock)GridTerminalSystem.GetBlockWithName("DummyA");
+            arena.DummyB = (IMyTerminalBlock)GridTerminalSystem.GetBlockWithName("DummyB");
             LCDDebug1 = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDDebug1");
-
+            
             Runtime.UpdateFrequency = UpdateFrequency.Update10;
         }
 
@@ -124,7 +148,11 @@ namespace IngameScript
         {
             if ((updateSource & (UpdateType.Terminal | UpdateType.Trigger | UpdateType.Script)) != 0)
             {
-                if (argument.Contains("SensorVolumeGateway"))
+                if (argument.Contains("Setup"))
+                {
+                    Storage = "0;0";
+                }
+                else if (argument.Contains("SensorVolumeGateway"))
                 {
                     int index = int.Parse(argument.Substring(argument.IndexOf("_") - 1, 1));
 
@@ -239,21 +267,39 @@ namespace IngameScript
 
                     }
                 }
+                else if (argument.Contains("Dummy"))
+                {
+                    if (argument == "DummyA_destroy")
+                    {
+                        arena.GiveBonus(true);
+                    }
+                    else if (argument == "DummyB_destroy")
+                    {
+                        arena.GiveBonus(false);
+                    }
+                }
                 else Echo("Do nothing...");
-
             }
 
             if ((updateSource & (UpdateType.Update100 | UpdateType.Update10 | UpdateType.Update1)) != 0)
             {
+                foreach (var door in StaffDoors)
+                    if (door.OpenRatio == 1)
+                        door.CloseDoor();
+
+                /*
                 if (arena.currentState == MyArena.StateGame.Ready && controlRoom.currentState != MyControlRoom.StateControlRoom.UserInside)
                     Runtime.UpdateFrequency = UpdateFrequency.Update100;
                 else Runtime.UpdateFrequency = UpdateFrequency.Update10;
+                */
 
                 if (!isError)
                 {
                     try
                     {
                         arena.RefreshState();
+
+                        foreach (var gateway in gateways) if (gateway.isNeedReset) gateway.RefreshState();
                     }
                     catch (Exception ex)
                     {
@@ -264,5 +310,5 @@ namespace IngameScript
                 }                                
             }                        
         }
-    }
+    }    
 }
