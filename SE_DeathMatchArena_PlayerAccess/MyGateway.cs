@@ -21,7 +21,7 @@ namespace IngameScript
         public StateGateway currentState = StateGateway.NotReady;
         public bool isGatewayReseted = true;
 
-        public TimeSpan timerPlayerCheckHydrogen = TimeSpan.FromSeconds(45);
+        public TimeSpan timerPlayerCheckHydrogen = TimeSpan.FromSeconds(41);
         public DateTime? timeStampStartHydrogenChecking;
         public bool isHydrogenChecked = false;
 

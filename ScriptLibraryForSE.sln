@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_DeathMatchArena_PlayerAc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_ToolsPropsFuncs", "ToolsPropsFuncs\SE_ToolsPropsFuncs.csproj", "{26DD66D4-8896-4C6F-9809-6215A59D79C3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SE_MinerScript", "SE_MinerScript\SE_MinerScript.csproj", "{5F855E2E-4687-4FD3-A12D-B32B8F0CA027}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -68,6 +70,8 @@ Global
 		{F6BBC5B5-D4B6-4533-A772-2AB57400116C}.Debug|x64.Build.0 = Debug|x64
 		{26DD66D4-8896-4C6F-9809-6215A59D79C3}.Debug|x64.ActiveCfg = Debug|x64
 		{26DD66D4-8896-4C6F-9809-6215A59D79C3}.Debug|x64.Build.0 = Debug|x64
+		{5F855E2E-4687-4FD3-A12D-B32B8F0CA027}.Debug|x64.ActiveCfg = Debug|x64
+		{5F855E2E-4687-4FD3-A12D-B32B8F0CA027}.Debug|x64.Build.0 = Debug|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

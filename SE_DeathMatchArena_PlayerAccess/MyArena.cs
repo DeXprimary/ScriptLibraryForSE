@@ -55,16 +55,16 @@ namespace IngameScript
         public List<long> teamB = new List<long>();
 
         public DateTime? timeStampPrepare;
-        public TimeSpan timeSpanPrepare = TimeSpan.FromSeconds(135);
+        public TimeSpan timeSpanPrepare = TimeSpan.FromSeconds(120);
         public TimeSpan timeSpanPrepareScaled;
         public DateTime? timeStampRunning;
-        public TimeSpan timeSpanRunning = TimeSpan.FromSeconds(60);
+        public TimeSpan timeSpanRunning = TimeSpan.FromSeconds(30);
         public DateTime? timeStampClosePrepareZone;
         public TimeSpan timeSpanClosePrepareZone = TimeSpan.FromSeconds(30);
         public DateTime? timeStampBattle;
-        public TimeSpan timeSpanBattle = TimeSpan.FromSeconds(300);
+        public TimeSpan timeSpanBattle = TimeSpan.FromSeconds(600);
         public DateTime? timeStampShowWinner;
-        public TimeSpan timeSpanShowWinner = TimeSpan.FromSeconds(30);
+        public TimeSpan timeSpanShowWinner = TimeSpan.FromSeconds(15);
 
         public StateGame currentState;
 
@@ -89,6 +89,8 @@ namespace IngameScript
 
             PrepareZoneSensorB = sensorB;
 
+            var entities = new List<MyDetectedEntityInfo>();
+
             switch (currentState)
             {
                 case StateGame.NotReady:
@@ -98,7 +100,7 @@ namespace IngameScript
                 case StateGame.Prepare:
                     timeStampPrepare = DateTime.Now;
                     timeSpanPrepareScaled = TimeSpan.FromSeconds((int)(timeSpanPrepare.TotalSeconds) * ((mainScript.controlRoom.modeSelected - 1) / 3 + 1));
-                    var entities = new List<MyDetectedEntityInfo>();
+                    entities.Clear();
                     PrepareZoneSensorA.DetectedEntities(entities);
                     foreach (var entity in entities) { teamA.Add(entity.EntityId); }
                     PrepareZoneSensorB.DetectedEntities(entities);
@@ -110,8 +112,9 @@ namespace IngameScript
                 case StateGame.ClosingDoors:
                     break;
                 case StateGame.Battling:
-                    timeStampClosePrepareZone = DateTime.Now;
-                    timeStampBattle = DateTime.Now;
+                    currentState = StateGame.Ending;
+                    //timeStampClosePrepareZone = DateTime.Now;
+                    //timeStampBattle = DateTime.Now;
                     break;
                 case StateGame.Ending:
                     timeStampShowWinner = DateTime.Now;
@@ -136,44 +139,11 @@ namespace IngameScript
             {
                 case StateGame.NotReady:
                     {
-                        ArenaTurret1.ApplyAction("OnOff_On");
-                        ArenaTurret2.ApplyAction("OnOff_On");
-                        ArenaTurret3.ApplyAction("OnOff_On");
-                        ArenaTurret4.ApplyAction("OnOff_On");
-                        ArenaTurret5.ApplyAction("OnOff_On");
-                        ArenaTurret6.ApplyAction("OnOff_On");                        
-
-                        DummyA.SetValueBool("Enable Restoration", true);
-                        DummyB.SetValueBool("Enable Restoration", true);
-
                         isArenaBeenUsed = false;
 
                         mainScript.controlRoom.isGameCanCancel = false;
 
-                        currentState = StateGame.Ready;
-
-                        mainScript.Save();
-                    }
-                    break;
-
-                case StateGame.Ready:
-                    {
-                        mainScript.controlRoom.RefreshState();
-
-                        if (timeStampShowWinner.HasValue)
-                        {
-                            if (timeSpanShowWinner < (DateTime.Now - timeStampShowWinner.Value))
-                            {
-                                LCDArenaState1.WriteText("СТАТУС АРЕНЫ:\n\nВ ОЖИДАНИИ\nНОВЫХ СМЕЛЬЧАКОВ");
-                                LCDArenaState2.WriteText("СТАТУС АРЕНЫ:\n\nВ ОЖИДАНИИ\nНОВЫХ СМЕЛЬЧАКОВ");
-                                LCDArenaBoardA.WriteText("");
-                                LCDArenaBoardB.WriteText("");
-                                LCDRespZoneA.WriteText("");
-                                LCDRespZoneB.WriteText("");
-                                timeStampShowWinner = null;
-                            }                            
-                        }
-                        else
+                        if (!timeStampShowWinner.HasValue || (timeSpanShowWinner < (DateTime.Now - timeStampShowWinner.Value)))
                         {
                             LCDArenaState1.WriteText("СТАТУС АРЕНЫ:\n\nВ ОЖИДАНИИ\nНОВЫХ СМЕЛЬЧАКОВ");
                             LCDArenaState2.WriteText("СТАТУС АРЕНЫ:\n\nВ ОЖИДАНИИ\nНОВЫХ СМЕЛЬЧАКОВ");
@@ -182,7 +152,29 @@ namespace IngameScript
                             LCDRespZoneA.WriteText("");
                             LCDRespZoneB.WriteText("");
                             timeStampShowWinner = null;
-                        }
+                            ArenaTurret1.ApplyAction("OnOff_On");
+                            ArenaTurret2.ApplyAction("OnOff_On");
+                            ArenaTurret3.ApplyAction("OnOff_On");
+                            ArenaTurret4.ApplyAction("OnOff_On");
+                            ArenaTurret5.ApplyAction("OnOff_On");
+                            ArenaTurret6.ApplyAction("OnOff_On");
+
+                            if (!ArenaMainSensor.IsActive)
+                            {
+                                DummyA.SetValueBool("Enable Restoration", true);
+                                DummyB.SetValueBool("Enable Restoration", true);                                
+
+                                currentState = StateGame.Ready;
+
+                                mainScript.Save();
+                            }
+                        }                        
+                    }
+                    break;
+
+                case StateGame.Ready:
+                    {
+                        mainScript.controlRoom.RefreshState();                        
 
                         if (mainScript.controlRoom.isGameCanCancel)
                         {
@@ -434,16 +426,9 @@ namespace IngameScript
 
                 case StateGame.Ending:
                     {
-                        
+                        currentState = StateGame.NotReady;
 
-                        if (!ArenaMainSensor.IsActive)
-                        {
-                            currentState = StateGame.NotReady;
-
-                            mainScript.Save();
-                        }
-                                                   
-
+                        mainScript.Save();
                     }
                     break;
 
@@ -469,28 +454,28 @@ namespace IngameScript
                 MyDefinitionId.Parse("MyObjectBuilder_PhysicalGunObject/AutomaticRifleItem"), mainScript.controlRoom.modeSelected, 3000);
 
             var AutomaticRifleGun_Mag_20rd = new MyStoreItemDataSimple(
-                MyDefinitionId.Parse("MyObjectBuilder_AmmoMagazine/AutomaticRifleGun_Mag_20rd"), mainScript.controlRoom.modeSelected * 10, 7000);
+                MyDefinitionId.Parse("MyObjectBuilder_AmmoMagazine/AutomaticRifleGun_Mag_20rd"), mainScript.controlRoom.modeSelected * 10, 25000);
 
             var PreciseAutomaticRifleItem = new MyStoreItemDataSimple(
-                MyDefinitionId.Parse("MyObjectBuilder_PhysicalGunObject/PreciseAutomaticRifleItem"), mainScript.controlRoom.modeSelected, 20000);
+                MyDefinitionId.Parse("MyObjectBuilder_PhysicalGunObject/PreciseAutomaticRifleItem"), mainScript.controlRoom.modeSelected, 50000);
 
             var PreciseAutomaticRifleGun_Mag_5rd = new MyStoreItemDataSimple(
-                MyDefinitionId.Parse("MyObjectBuilder_AmmoMagazine/PreciseAutomaticRifleGun_Mag_5rd"), mainScript.controlRoom.modeSelected * 5, 30000);
+                MyDefinitionId.Parse("MyObjectBuilder_AmmoMagazine/PreciseAutomaticRifleGun_Mag_5rd"), mainScript.controlRoom.modeSelected * 10, 100000);
 
             var RapidFireAutomaticRifleItem = new MyStoreItemDataSimple(
-                MyDefinitionId.Parse("MyObjectBuilder_PhysicalGunObject/RapidFireAutomaticRifleItem"), mainScript.controlRoom.modeSelected, 50000);
+                MyDefinitionId.Parse("MyObjectBuilder_PhysicalGunObject/RapidFireAutomaticRifleItem"), mainScript.controlRoom.modeSelected, 100000);
 
             var RapidFireAutomaticRifleGun_Mag_50rd = new MyStoreItemDataSimple(
-                MyDefinitionId.Parse("MyObjectBuilder_AmmoMagazine/RapidFireAutomaticRifleGun_Mag_50rd"), mainScript.controlRoom.modeSelected * 3, 100000);
+                MyDefinitionId.Parse("MyObjectBuilder_AmmoMagazine/RapidFireAutomaticRifleGun_Mag_50rd"), mainScript.controlRoom.modeSelected * 10, 200000);
 
             var WelderItem = new MyStoreItemDataSimple(
-                MyDefinitionId.Parse("MyObjectBuilder_PhysicalGunObject/WelderItem"), mainScript.controlRoom.modeSelected, 8000);
+                MyDefinitionId.Parse("MyObjectBuilder_PhysicalGunObject/WelderItem"), mainScript.controlRoom.modeSelected, 26000);
 
             var AngleGrinderItem = new MyStoreItemDataSimple(
-                MyDefinitionId.Parse("MyObjectBuilder_PhysicalGunObject/AngleGrinderItem"), mainScript.controlRoom.modeSelected, 8000);
+                MyDefinitionId.Parse("MyObjectBuilder_PhysicalGunObject/AngleGrinderItem"), mainScript.controlRoom.modeSelected, 26000);
 
             var HandDrillItem = new MyStoreItemDataSimple(
-                MyDefinitionId.Parse("MyObjectBuilder_PhysicalGunObject/HandDrillItem"), mainScript.controlRoom.modeSelected, 8000);
+                MyDefinitionId.Parse("MyObjectBuilder_PhysicalGunObject/HandDrillItem"), mainScript.controlRoom.modeSelected, 26000);
 
             PrepareZoneStoreA.InsertOffer(AutomaticRifleItem, out insertedId);
             PrepareZoneStoreA.InsertOffer(AutomaticRifleGun_Mag_20rd, out insertedId);
@@ -580,7 +565,7 @@ namespace IngameScript
 
         public void GiveBonus(bool isSideA)
         {
-            for (int i = 0; i < mainScript.controlRoom.modeSelected; i++)
+            for (int i = 0; i < mainScript.controlRoom.modeSelected * 2; i++)
             {
                 if (isSideA)
                 {

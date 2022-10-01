@@ -76,6 +76,30 @@ namespace IngameScript
                 };
             }
 
+            IMyTextSurfaceProvider surface;
+
+            foreach (var gateway in gateways)
+            {
+                surface = (IMyTextSurfaceProvider)gateway.Button;
+
+                for (int i = 0; i < 3; i++)
+                {
+                    surface.GetSurface(i).ContentType = ContentType.TEXT_AND_IMAGE;
+                    surface.GetSurface(i).FontSize = 10f;
+                    surface.GetSurface(i).FontColor = new Color(100, 100, 0);
+                    surface.GetSurface(i).Alignment = TextAlignment.CENTER;
+                    surface.GetSurface(i).TextPadding = 2f;
+                    surface.GetSurface(i).WriteText((i + 1).ToString());
+                }
+
+                surface.GetSurface(3).ContentType = ContentType.TEXT_AND_IMAGE;
+                surface.GetSurface(3).FontSize = 6f;
+                surface.GetSurface(3).FontColor = new Color(100, 100, 0);
+                surface.GetSurface(3).Alignment = TextAlignment.CENTER;
+                surface.GetSurface(3).TextPadding = 16f;
+                surface.GetSurface(3).WriteText("Выход");
+            }
+
             controlRoom = new MyControlRoom(this)
             {
                 Door = (IMyDoor)GridTerminalSystem.GetBlockWithName("ControlRoomDoor"),
@@ -84,6 +108,34 @@ namespace IngameScript
                 ButtonExit = (IMyButtonPanel)GridTerminalSystem.GetBlockWithName("ControlRoomExit"),
                 LCDControlRoom = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDControlRoom"),
             };
+
+            surface = (IMyTextSurfaceProvider)controlRoom.Button1;
+
+            for (int i = 0; i < 3; i++)
+            {
+                surface.GetSurface(i).ContentType = ContentType.TEXT_AND_IMAGE;
+                surface.GetSurface(i).FontSize = 8f;
+                surface.GetSurface(i).FontColor = new Color(100, 100, 0);
+                surface.GetSurface(i).Alignment = TextAlignment.CENTER;
+                surface.GetSurface(i).TextPadding = 10f;
+                surface.GetSurface(i).WriteText((i + 1).ToString() + "x" + (i + 1).ToString());
+            }
+
+            surface.GetSurface(3).ContentType = ContentType.TEXT_AND_IMAGE;
+            surface.GetSurface(3).FontSize = 5f;
+            surface.GetSurface(3).FontColor = new Color(100, 100, 0);
+            surface.GetSurface(3).Alignment = TextAlignment.CENTER;
+            surface.GetSurface(3).TextPadding = 25f;
+            surface.GetSurface(3).WriteText("Далее");
+
+            surface = (IMyTextSurfaceProvider)controlRoom.ButtonExit;
+
+            surface.GetSurface(0).ContentType = ContentType.TEXT_AND_IMAGE;
+            surface.GetSurface(0).FontSize = 4.5f;
+            surface.GetSurface(0).FontColor = new Color(100, 100, 0);
+            surface.GetSurface(0).Alignment = TextAlignment.CENTER;
+            surface.GetSurface(0).TextPadding = 12f;
+            surface.GetSurface(0).WriteText("Покинуть\nкомнату");
 
             if (Storage.Length > 0)
             {
@@ -100,8 +152,6 @@ namespace IngameScript
                 this);
 
             arena.ArenaMainSensor = (IMySensorBlock)GridTerminalSystem.GetBlockWithName("ArenaMainSensor");
-            //arena.PrepareZoneSensorA = (IMySensorBlock)GridTerminalSystem.GetBlockWithName("PrepareZoneSensorA");
-            //arena.PrepareZoneSensorB = (IMySensorBlock)GridTerminalSystem.GetBlockWithName("PrepareZoneSensorB");
             arena.PrepareZoneDoorA = (IMyDoor)GridTerminalSystem.GetBlockWithName("PrepareZoneDoorA");
             arena.PrepareZoneDoorB = (IMyDoor)GridTerminalSystem.GetBlockWithName("PrepareZoneDoorB");
             arena.ArenaDoorA = (IMyDoor)GridTerminalSystem.GetBlockWithName("ArenaEntranceDoorA");
@@ -135,7 +185,28 @@ namespace IngameScript
             arena.DummyA = (IMyTerminalBlock)GridTerminalSystem.GetBlockWithName("DummyA");
             arena.DummyB = (IMyTerminalBlock)GridTerminalSystem.GetBlockWithName("DummyB");
             LCDDebug1 = (IMyTextSurface)GridTerminalSystem.GetBlockWithName("LCDDebug1");
-            
+
+            foreach (var surf in (new List<IMyTextSurfaceProvider>() { (IMyTextSurfaceProvider)arena.PrepareZoneStoreA, (IMyTextSurfaceProvider)arena.PrepareZoneStoreB } ))
+            {
+                surf.GetSurface(0).ContentType = ContentType.TEXT_AND_IMAGE;
+                surf.GetSurface(0).FontSize = 2.3f;
+                surf.GetSurface(0).FontColor = new Color(100, 100, 0);
+                surf.GetSurface(0).Alignment = TextAlignment.CENTER;
+                surf.GetSurface(0).TextPadding = 5f;
+                surf.GetSurface(0).WriteText("Тут\nможно продать\nначальные\nинструменты");
+
+                surf.GetSurface(1).ContentType = ContentType.TEXT_AND_IMAGE;
+                surf.GetSurface(1).PreserveAspectRatio = true;
+                surf.GetSurface(1).ChangeInterval = 1f;
+                var liststr = new List<string>();
+                surf.GetSurface(1).GetSelectedImages(liststr);
+                if (liststr.Count == 0)
+                {
+                    surf.GetSurface(1).AddImageToSelection("Arrow");
+                    surf.GetSurface(1).AddImageToSelection("LCD_Economy_SC_Here");
+                }
+            }
+
             Runtime.UpdateFrequency = UpdateFrequency.Update10;
         }
 
